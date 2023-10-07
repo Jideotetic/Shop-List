@@ -9,6 +9,9 @@
   </head>
   <body class="bg-gray-400">
     <h1 class="text-center text-3xl font-bold py-10">My ShopCart List</h1>
+    <p id="item-count" class="text-center text-3xl font-medium pb-10">
+      You have no item in your list
+    </p>
 
     <form class="flex item-center justify-center flex-col mx-auto max-w-sm">
       <label class="text-lg" for="item">Enter a new item</label>
@@ -50,7 +53,9 @@
       const AddItemButton = document.querySelector("button");
       const dialog = document.querySelector("dialog");
       const confirmButton = document.querySelector("#confirm");
+      const itemCount = document.querySelector("#item-count");
       let itemToDelete;
+      let count;
 
       AddItemButton.addEventListener("click", (e) => {
         e.preventDefault();
@@ -71,6 +76,12 @@
         listBtn.textContent = "Delete";
         itemList.appendChild(listItem);
 
+        count = itemList.children.length;
+
+        itemCount.textContent = `You have ${count} ${
+          count < 2 ? "item" : "items"
+        } in your list`;
+
         listBtn.addEventListener("click", () => {
           itemToDelete = listItem;
           dialog.showModal();
@@ -83,6 +94,14 @@
         e.preventDefault();
         itemList.removeChild(itemToDelete);
         dialog.close();
+
+        count = itemList.children.length;
+
+        itemCount.textContent = `${
+          count < 1
+            ? "You have no item in your list"
+            : `You have ${count} ${count < 2 ? "item" : "items"} in your list`
+        }`;
       });
     </script>
   </body>
