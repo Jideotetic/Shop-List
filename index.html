@@ -10,7 +10,7 @@
   <body class="bg-gray-400">
     <h1 class="text-center text-3xl font-bold py-10">My ShopCart List</h1>
 
-    <div class="flex item-center justify-center flex-col mx-auto max-w-sm">
+    <form class="flex item-center justify-center flex-col mx-auto max-w-sm">
       <label class="text-lg" for="item">Enter a new item</label>
       <input
         type="text"
@@ -21,34 +21,68 @@
       <button class="bg-blue-500 text-white py-3 rounded-xl mt-4">
         Add Item
       </button>
-    </div>
+    </form>
 
     <ul class="mx-auto max-w-sm pt-6"></ul>
 
+    <dialog class="p-10">
+      <p class="text-center text-3xl font-bold pb-4">Delete Item</p>
+      <p class="pb-4">Are you sure you want to delete item!</p>
+      <form class="flex w-full">
+        <button
+          class="bg-gray-400 hover:bg-gray-200 p-1 w-[50%] rounded-xl"
+          formmethod="dialog"
+        >
+          Cancel
+        </button>
+        <button
+          id="confirm"
+          class="bg-red-400 hover:bg-red-500 p-1 w-[50%] rounded-xl"
+        >
+          Confirm
+        </button>
+      </form>
+    </dialog>
+
     <script>
-      const list = document.querySelector('ul');
-      const input = document.querySelector('input');
-      const button = document.querySelector('button');
+      const itemList = document.querySelector("ul");
+      const input = document.querySelector("input");
+      const AddItemButton = document.querySelector("button");
+      const dialog = document.querySelector("dialog");
+      const confirmButton = document.querySelector("#confirm");
+      let itemToDelete;
 
-      button.addEventListener('click', () => {
+      AddItemButton.addEventListener("click", (e) => {
+        e.preventDefault();
         const myItem = input.value;
-        input.value = '';
+        if (myItem === "") {
+          input.focus();
+          return;
+        }
+        input.value = "";
 
-        const listItem = document.createElement('li');
-        const listText = document.createElement('span');
-        const listBtn = document.createElement('button');
+        const listItem = document.createElement("li");
+        const listText = document.createElement("span");
+        const listBtn = document.createElement("button");
 
         listItem.appendChild(listText);
         listText.textContent = myItem;
         listItem.appendChild(listBtn);
-        listBtn.textContent = 'Delete';
-        list.appendChild(listItem);
+        listBtn.textContent = "Delete";
+        itemList.appendChild(listItem);
 
-        listBtn.addEventListener('click', () => {
-          list.removeChild(listItem);
+        listBtn.addEventListener("click", () => {
+          itemToDelete = listItem;
+          dialog.showModal();
         });
 
         input.focus();
+      });
+
+      confirmButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        itemList.removeChild(itemToDelete);
+        dialog.close();
       });
     </script>
   </body>
