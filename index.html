@@ -33,14 +33,14 @@
       <p class="pb-4">Are you sure you want to delete item!</p>
       <form class="flex w-full">
         <button
-          class="bg-gray-400 hover:bg-gray-200 p-1 w-[50%] rounded-xl"
+          class="bg-slate-700 hover:bg-gray-800 p-1 w-[50%] rounded-xl text-white"
           formmethod="dialog"
         >
           Cancel
         </button>
         <button
           id="confirm"
-          class="bg-red-400 hover:bg-red-500 p-1 w-[50%] rounded-xl"
+          class="bg-red-900 hover:bg-red-800 p-1 w-[50%] rounded-xl text-white"
         >
           Confirm
         </button>
@@ -68,12 +68,21 @@
 
         const listItem = document.createElement("li");
         const listText = document.createElement("span");
-        const listBtn = document.createElement("button");
+        const taskInput = document.createElement("input");
+        const buttonContainer = document.createElement("div");
+        const deleteButton = document.createElement("button");
+        const editButton = document.createElement("button");
 
         listItem.appendChild(listText);
         listText.textContent = myItem;
-        listItem.appendChild(listBtn);
-        listBtn.textContent = "Delete";
+        listItem.appendChild(taskInput);
+        taskInput.type = "text";
+        taskInput.value = myItem;
+        listItem.appendChild(buttonContainer);
+        buttonContainer.appendChild(editButton);
+        buttonContainer.appendChild(deleteButton);
+        deleteButton.textContent = "Delete";
+        editButton.textContent = "Edit";
         itemList.appendChild(listItem);
 
         count = itemList.children.length;
@@ -82,9 +91,23 @@
           count < 2 ? "item" : "items"
         } in your list`;
 
-        listBtn.addEventListener("click", () => {
+        deleteButton.addEventListener("click", () => {
           itemToDelete = listItem;
           dialog.showModal();
+        });
+
+        editButton.addEventListener("click", () => {
+          if (editButton.innerText === "Edit") {
+            listText.style.display = "none";
+            taskInput.style.display = "inline";
+            taskInput.focus();
+            editButton.innerText = "Save";
+          } else {
+            editButton.innerText = "Edit";
+            listText.style.display = "inline";
+            taskInput.style.display = "none";
+            listText.textContent = taskInput.value;
+          }
         });
 
         input.focus();
