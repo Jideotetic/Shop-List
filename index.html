@@ -57,15 +57,12 @@
       let itemToDelete;
       let count;
 
-      AddItemButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        const myItem = input.value;
-        if (myItem === "") {
-          input.focus();
-          return;
-        }
-        input.value = "";
+      // check for todos on page reload
+      let todos = JSON.parse(localStorage.getItem("todos"));
 
+      todos !== null ? todos.map((todo) => createElements(todo)) : (todos = []);
+
+      function createElements(content) {
         const listItem = document.createElement("li");
         const listText = document.createElement("span");
         const taskInput = document.createElement("input");
@@ -74,10 +71,10 @@
         const editButton = document.createElement("button");
 
         listItem.appendChild(listText);
-        listText.textContent = myItem;
+        listText.textContent = content;
         listItem.appendChild(taskInput);
         taskInput.type = "text";
-        taskInput.value = myItem;
+        taskInput.value = content;
         listItem.appendChild(buttonContainer);
         buttonContainer.appendChild(editButton);
         buttonContainer.appendChild(deleteButton);
@@ -97,11 +94,11 @@
         });
 
         editButton.addEventListener("click", () => {
-          if (editButton.innerText === "Edit") {
+          if (editButton.textContent === "Edit") {
+            editButton.textContent = "Save";
             listText.style.display = "none";
             taskInput.style.display = "inline";
             taskInput.focus();
-            editButton.innerText = "Save";
           } else {
             editButton.innerText = "Edit";
             listText.style.display = "inline";
@@ -109,6 +106,22 @@
             listText.textContent = taskInput.value;
           }
         });
+      }
+
+      AddItemButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const myItem = input.value;
+        if (myItem === "") {
+          input.focus();
+          return;
+        }
+        input.value = "";
+
+        createElements(myItem);
+
+        todos.push(myItem);
+
+        localStorage.setItem("todos", JSON.stringify(todos));
 
         input.focus();
       });
@@ -116,6 +129,8 @@
       confirmButton.addEventListener("click", (e) => {
         e.preventDefault();
         itemList.removeChild(itemToDelete);
+        todos.splice(0, 1);
+        localStorage.setItem("todos", JSON.stringify(todos));
         dialog.close();
 
         count = itemList.children.length;
