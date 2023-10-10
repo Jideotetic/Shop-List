@@ -27,7 +27,13 @@
       <p class="mb-2">Set Priority</p>
       <p class="mb-2">
         <label
-          ><input type="radio" name="priority" value="high" id="high" />
+          ><input
+            type="radio"
+            name="priority"
+            value="high"
+            id="high"
+            required
+          />
           High</label
         >
         <label
@@ -50,7 +56,6 @@
             <option value="high">High priority</option>
             <option value="medium">Medium priority</option>
             <option value="low">Low priority</option>
-            <option value="low">No priority</option>
           </select>
         </label>
       </p>
@@ -88,6 +93,7 @@
       const itemCount = document.querySelector("#item-count");
       let itemToDelete;
       let count;
+      let id = 0;
 
       // check for todos on page reload
       let todos = JSON.parse(localStorage.getItem("todos"));
@@ -134,16 +140,22 @@
         priorityContainer.appendChild(lowPriority);
         priorityContainer.appendChild(lowPriorityLabel);
         highPriorityLabel.textContent = "High";
+        highPriorityLabel.setAttribute("for", `${++id}`);
+        highPriority.setAttribute("id", `${id++}`);
         mediumPriorityLabel.textContent = "Medium";
+        mediumPriorityLabel.setAttribute("for", `${++id}`);
+        mediumPriority.setAttribute("id", `${id++}`);
         lowPriorityLabel.textContent = "Low";
+        lowPriorityLabel.setAttribute("for", `${++id}`);
+        lowPriority.setAttribute("id", `${id++}`);
         highPriority.type = "radio";
-        highPriority.name = "priority";
+        highPriority.name = content.priority;
         highPriority.value = "high";
         mediumPriority.type = "radio";
-        mediumPriority.name = "priority";
+        mediumPriority.name = content.priority;
         mediumPriority.value = "medium";
         lowPriority.type = "radio";
-        lowPriority.name = "priority";
+        lowPriority.name = content.priority;
         lowPriority.value = "low";
         listItem.appendChild(buttonContainer);
         buttonContainer.appendChild(editButton);
@@ -151,20 +163,6 @@
         deleteButton.textContent = "Delete";
         editButton.textContent = "Edit";
         itemList.appendChild(listItem);
-
-        if (highPriority.checked) {
-          listItem.style.borderLeft = "2px";
-          listItem.style.borderLeftColor = "red";
-          listItem.style.borderLeftStyle = "solid";
-        } else if (mediumPriority.checked) {
-          listItem.style.borderLeft = "2px";
-          listItem.style.borderLeftColor = "green";
-          listItem.style.borderLeftStyle = "solid";
-        } else if (lowPriority.checked) {
-          listItem.style.borderLeft = "2px";
-          listItem.style.borderLeftColor = "blue";
-          listItem.style.borderLeftStyle = "solid";
-        }
 
         if (content.priority === "high") {
           listItem.style.borderLeft = "2px";
@@ -175,6 +173,20 @@
           listItem.style.borderLeftColor = "green";
           listItem.style.borderLeftStyle = "solid";
         } else if (content.priority === "low") {
+          listItem.style.borderLeft = "2px";
+          listItem.style.borderLeftColor = "blue";
+          listItem.style.borderLeftStyle = "solid";
+        }
+
+        if (highPriority.checked) {
+          listItem.style.borderLeft = "2px";
+          listItem.style.borderLeftColor = "red";
+          listItem.style.borderLeftStyle = "solid";
+        } else if (mediumPriority.checked) {
+          listItem.style.borderLeft = "2px";
+          listItem.style.borderLeftColor = "green";
+          listItem.style.borderLeftStyle = "solid";
+        } else if (lowPriority.checked) {
           listItem.style.borderLeft = "2px";
           listItem.style.borderLeftColor = "blue";
           listItem.style.borderLeftStyle = "solid";
@@ -195,14 +207,41 @@
           if (editButton.textContent === "Edit") {
             editButton.textContent = "Save";
             listText.style.display = "none";
-            inputContainer.style.display = "inline";
+            inputContainer.style.display = "flex";
             taskInput.focus();
+            if (content.priority === "high") {
+              highPriority.checked = true;
+            } else if (content.priority === "medium") {
+              mediumPriority.checked = true;
+            } else if (content.priority === "low") {
+              lowPriority.checked = true;
+            }
           } else {
             editButton.innerText = "Edit";
-            listText.style.display = "inline";
+            listText.style.display = "block";
             inputContainer.style.display = "none";
             listText.textContent = taskInput.value;
             content.myItem = taskInput.value;
+            if (highPriority.checked) {
+              content.priority = highPriority.value;
+            } else if (mediumPriority.checked) {
+              content.priority = mediumPriority.value;
+            } else if (lowPriority.checked) {
+              content.priority = lowPriority.value;
+            }
+            if (highPriority.checked) {
+              listItem.style.borderLeft = "2px";
+              listItem.style.borderLeftColor = "red";
+              listItem.style.borderLeftStyle = "solid";
+            } else if (mediumPriority.checked) {
+              listItem.style.borderLeft = "2px";
+              listItem.style.borderLeftColor = "green";
+              listItem.style.borderLeftStyle = "solid";
+            } else if (lowPriority.checked) {
+              listItem.style.borderLeft = "2px";
+              listItem.style.borderLeftColor = "blue";
+              listItem.style.borderLeftStyle = "solid";
+            }
             localStorage.setItem("todos", JSON.stringify(todos));
           }
         });
@@ -211,8 +250,18 @@
       AddItemButton.addEventListener("click", (e) => {
         e.preventDefault();
         const myItem = itemInput.value;
+
         if (myItem === "") {
           input.focus();
+          return;
+        }
+
+        if (
+          highPriority.checked === false &&
+          mediumPriority.checked === false &&
+          lowPriority.checked === false
+        ) {
+          alert("Set a priority");
           return;
         }
         itemInput.value = "";
@@ -225,9 +274,11 @@
           todo = { priority: mediumPriority.value, myItem: myItem };
         } else if (lowPriority.checked) {
           todo = { priority: lowPriority.value, myItem: myItem };
-        } else {
-          todo = { priority: "", myItem: myItem };
         }
+
+        // else {
+        //   todo = { priority: "", myItem: myItem };
+        // }
 
         todos.push(todo);
 
